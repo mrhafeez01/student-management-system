@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+            color: #333;
+        }
+
+        header {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        header p {
+            margin: 8px 0 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .form-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #ccc;
+        }
+
+        .form-box h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .add-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 13px;
+            border: none;
+            border-radius: 6px;
+            background: #222;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background: #444;
+        }
+
+        .students-box {
+            background: white;
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #ccc;
+        }
+
+        .students-box h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #222;
+            color: white;
+        }
+
+        .delete-btn {
+            padding: 7px 12px;
+            border: none;
+            border-radius: 5px;
+            background: #555;
+            color: white;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #333;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #777;
+            padding: 20px;
+        }
+
+        @media (max-width: 700px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .students-box {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 700px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>🎓 Student Management System</h1>
+        <p>Student Registration Portal</p>
+    </header>
+
+    <div class="container">
+
+        <!-- Student Form -->
+        <div class="form-box">
+            <h2>➕ Add Student</h2>
+
+            <div class="form-grid">
+
+                <input
+                    type="text"
+                    id="studentName"
+                    placeholder="Enter Student Name"
+                >
+
+                <input
+                    type="text"
+                    id="studentId"
+                    placeholder="Enter Student ID"
+                >
+
+                <select id="course">
+                    <option value="">Select Course</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Computer Engineering">Computer Engineering</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Mechanical">Mechanical</option>
+                </select>
+
+                <input
+                    type="text"
+                    id="college"
+                    placeholder="Enter College Name"
+                >
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter Email"
+                >
+
+                <input
+                    type="tel"
+                    id="phone"
+                    placeholder="Enter Phone Number"
+                >
+
+            </div>
+
+            <button class="add-btn" onclick="addStudent()">
+                Add Student
+            </button>
+        </div>
+
+
+        <!-- Student List -->
+        <div class="students-box">
+
+            <h2>📋 Student List</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Course</th>
+                        <th>College</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="studentTable">
+
+                    <tr id="emptyRow">
+                        <td colspan="8" class="empty-message">
+                            No students registered yet.
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        let studentCount = 0;
+
+
+        function addStudent() {
+
+            // Get values from form
+            let name = document.getElementById("studentName").value.trim();
+            let id = document.getElementById("studentId").value.trim();
+            let course = document.getElementById("course").value;
+            let college = document.getElementById("college").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let phone = document.getElementById("phone").value.trim();
+
+
+            // Check empty fields
+            if (
+                name === "" ||
+                id === "" ||
+                course === "" ||
+                college === "" ||
+                email === "" ||
+                phone === ""
+            ) {
+                alert("Please fill all the fields!");
+                return;
+            }
+
+
+            // Remove empty message
+            let emptyRow = document.getElementById("emptyRow");
+
+            if (emptyRow) {
+                emptyRow.remove();
+            }
+
+
+            // Increase student count
+            studentCount++;
+
+
+            // Create new table row
+            let table = document.getElementById("studentTable");
+
+            let row = table.insertRow();
+
+
+            row.innerHTML = `
+                <td>${studentCount}</td>
+                <td>${id}</td>
+                <td>${name}</td>
+                <td>${course}</td>
+                <td>${college}</td>
+                <td>${email}</td>
+                <td>${phone}</td>
+                <td>
+                    <button class="delete-btn"
+                        onclick="deleteStudent(this)">
+                        Delete
+                    </button>
+                </td>
+            `;
+
+
+            // Clear form
+            document.getElementById("studentName").value = "";
+            document.getElementById("studentId").value = "";
+            document.getElementById("course").value = "";
+            document.getElementById("college").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("phone").value = "";
+
+
+            alert("Student added successfully! 🎓");
+        }
+
+
+        function deleteStudent(button) {
+
+            // Delete the selected row
+            let row = button.parentElement.parentElement;
+
+            row.remove();
+        }
+
+    </script>
+
+</body>
+</html>
